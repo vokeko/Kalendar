@@ -84,13 +84,13 @@ namespace Kalendář
 
             StreamReader ctu = new StreamReader(cestazmesta);
 
+            //stufak je pomocný array, pouze pro rozdělení lajny. Z něj se přepisuje do stuffu
             string lajna = ctu.ReadLine();
             string[] stufak = new string[3];
-            //stufak je pomocnej array, pouze pro rozdělení lajny. Z něj se přepisuje do stuffu
             while (lajna != null)
             {
+                //příkaz rozdělí přečtenou line na 3 stringy, které uloží do stufaku. Rozdělí je pomocí hvězdičky
                 stufak = lajna.Split('*');
-                //příkaz rozdělí přečtenou lajnu na 3 stringy, které uloží do stufaku. Rozdělí je pomocí hvězdičky
                 stuff[0] = Convert.ToDateTime(stufak[0]);
                 stuff[1] = stufak[1];
                 stuff[2] = Convert.ToBoolean(stufak[2]);
@@ -101,10 +101,10 @@ namespace Kalendář
                     //chybné datum. Stará data se nezapíší do multiarraye
                     if ((bool)stuff[2] == true)
                     {
-                        DateTime docasnejDatum = (DateTime)stuff[0];
                         //toto se spustí v případě, že se má událost opakovat
                         //Kód by měl přidávat roky tak dlouhu, dokud je událost menší nebo rovno dnešnímu datu
                         //Jakmile bude větší, měl by se zapsat
+                        DateTime docasnejDatum = (DateTime)stuff[0];
                         do
                         {
                             docasnejDatum = docasnejDatum.AddYears(1);
@@ -148,19 +148,14 @@ namespace Kalendář
 
                     TimeSpan ts = (DateTime)multiArray[z, 0] - DateTime.Now;
                     denleft_box.Text = Convert.ToString(ts.Days);
-
-
-                    /* Pak bych měl udělat tento program tak, aby se spouštěl po spuštění
-                     * Ikona by taky nebyla na škodu
-                     */
                 }
             }
         }
 
         public void PrevedDoMultiArraye(bool zapisujem)
         {
-            int iks = 0;
             //iks počítá počet loopů
+            int iks = 0;
 
             do
             {
@@ -173,26 +168,26 @@ namespace Kalendář
             Array.Clear(stuff, 0, stuff.Length);
             if (zapisujem == true)
             {
-                StreamWriter pisu = File.AppendText(cestazmesta);
                 //přepsat kód - ze stuffu se nyní musí všechn překonvertovat. .append způsobí, že se píše na konec dokumentu
+                StreamWriter pisu = File.AppendText(cestazmesta);
                 pisu.WriteLine("" + (DateTime)multiArray[ypsilon, 0] + "*" + (string)multiArray[ypsilon, 1] +"*"+ (bool)multiArray[ypsilon, 2]);
                 pisu.Close();
             }
 
-            ypsilon++;
             // ypsilon umožňuje další zapisování odlišené události
+            ypsilon++;
         }
 
         private void PrepisText()
         {
             //Tohle se zavolá v případě, že text se prepisuje (tj. - vymazává se všechno co není v multiarrayi)
-            File.WriteAllText(cestazmesta, String.Empty);
             //Nejdřív se vymaže všechen text
+            File.WriteAllText(cestazmesta, String.Empty);
             StreamWriter prepisu = new StreamWriter(cestazmesta);
             int pridej = 0;
+            //pak se vypíše všechen text
             while ((string)multiArray[pridej, 1] != null && (string)multiArray[pridej, 1] != "")
             {
-                //pak se vypíše všechen text
                 prepisu.WriteLine("" + Convert.ToString((DateTime)multiArray[pridej, 0]) + "*" + (string)multiArray[pridej, 1] + "*" + Convert.ToString((bool)multiArray[pridej, 2]));
                 pridej++;
             }
@@ -227,10 +222,8 @@ namespace Kalendář
 
             if (jevytvoreno == true)
             {
+                //mění se na false takhle brzy proto, aby se timer neaktivoval víckrát. Zaznemená vytvoření nové události.
                 jevytvoreno = false;
-                /*mění se na false takhle brzy proto, aby se timer neaktivoval víckrát
-                 *timer zaznamená, že je vytvořená nová událost 
-                 */
                 PrevedDoMultiArraye(true);
                 HledamDatum();
             }
